@@ -1,0 +1,34 @@
+{
+  "id": "8bebc142-60c3-49e7-83f5-d654a2afd5da",
+  "timestamp": "2017-07-27T17:29:04.162Z",
+  "lang": "en",
+  "result": {
+    "source": "agent",
+    "resolvedQuery": "what is the testbed status",
+    "action": "",
+    "actionIncomplete": false,
+    "parameters": {},
+    "contexts": [],
+    "metadata": {
+      "intentId": "75a4a5f2-da28-413d-984f-79aae29722d4",
+      "webhookUsed": "false",
+      "webhookForSlotFillingUsed": "false",
+      "intentName": "Status of the testbed"
+    },
+    "fulfillment": {
+      "speech": "",
+      "messages": [
+        {
+          "type": 0,
+          "speech": ""
+        }
+      ]
+    },
+    "score": 0.7799999713897705
+  },
+  "status": {
+    "code": 200,
+    "errorType": "success"
+  },
+  "sessionId": "193db66d-0fff-42b1-8f65-20bb8d6130c8"
+}
