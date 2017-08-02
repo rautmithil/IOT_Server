@@ -1,0 +1,11 @@
+curl -v -H "Content-Type: application/json" -X POST -d {\"deviceID\":\"Test\",\"time\":\"Test\",\"event\":\"Test\",\"deviceType\":\"Test\",\"sensorTypes\":\"Test\",\"sensorData\":\"Test\",\"group\":\"Test\",\"location\":\"Test\",\"file\":\"Test\"} http://localhost:8000
+
+curl -v -H "Content-Type: application/json" -X POST -d {\"deviceID\":\"Test\",\"time\":\"Test\",\"event\":\"Test\",\"deviceType\":\"Test\",\"sensorTypes\":\"Test\",\"sensorData\":\"Test\",\"group\":\"Test\",\"location\":\"Test\",\"file\":\"Test\"} http://192.168.1.101:8000
+
+{"deviceID":"Test","time":"Test","event":"Test","deviceType":"Test","sensorTypes":"Test","sensorData":"Test","group":"Test","location":"Test","file":"Test"}
+
+deviceID,time,event,deviceType,sensorTypes,sensorData,group,location,file\r\nTest,Test,Test,Test,Test,Test,Test,Test,Test
+
+curl -v -H "Content-Type: application/json" -X POST -d {\"deviceID\":\"Test\",\"time\":\"Test\",\"event\":{\"eventType\":\"connect\"},\"deviceType\":\"Test\",\"sensorTypes\":[\"Test\"],\"sensorData\":[123],\"group\":\"Test\",\"location\":\"Test\",\"file\":\"Test\"} http://localhost:8000
+
+curl -v -H "Content-Type: application/json" -X POST -d {\"deviceID\":\"init\",\"time\":\"Test\",\"event\":{\"eventType\":\"connect\"},\"deviceType\":\"Test\",\"sensorTypes\":[\"Test\"],\"sensorData\":[123],\"group\":\"Test\",\"location\":\"Test\",\"file\":\"Test\"} http://192.168.1.101:8000
