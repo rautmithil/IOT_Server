@@ -1,5 +1,5 @@
 This is documentation for the webhook format used in the local server.
-Kenwood Harris Jr, Boston University V1 June 21 2017.
+Kenwood Harris Jr, Boston University V2 September 18 2017.
 
 The local server accepts webhook requests from IOT devices. The server
 currently handles HTTP requests only and compatibility for HTTPS is ongoing. The following
@@ -8,29 +8,20 @@ document outlines the client-server communication, request format, as well as re
 #OVERVIEW---------------------------------------------------------------------------------------------
 
 Conversations between the device and the server follow typical HTTP protocol, with
-device acting as a client to the server. The Device sends three types of messages to
-the server to act upon, CONNECT, POST, and GET. In all three request methods a body
+device acting as a client to the server. The Device sends two types of messages to
+the server to act upon, POST, and GET. In both request methods a body
 is required, with the data formatted to the required JSON detailed below. The Server
 then returns a response to the device, despite the method called, again following
 the pre-determined JSON structure.
 
 #METHOD USAGE-----------------------------------------------------------------------------------------
 
-Of the HTTP methods only three are accepted by the Server, CONNECT, POST, and GET.
-Each of these methods has event-types that determine the action taken by the server.
-
-The CONNECT method is an important step in the setup of the connection. The CONNECT
-method is used to obtain a deviceID as well as establish a connection between the
-server and the device. The CONNECT method will be sent with details of the device,
-as well as initial setting data in the body of the request, following the JSON structure.
-The server in response will create the necessary log files, call the necessary functions,
-and send a response for the device to interpret(in the necessary JSON structure). The
-response from the server will include the necessary information regarding the setup and
-status that the user wishes for the device to obtain. Finally the CONNECT method can be used
-to obtain a new deviceID for a device that already exists.
+Of the HTTP methods only two are accepted by the Server, POST, and GET.
+Each of these methods has event-types that determine the action taken by the server. POST is the most
+common use case, and will be used for ALL communication between device and Server.
 
 The POST method is the most frequently used method when communicating with the server.
-The POST method is used to update the server with device data, reset devices,
+The POST method is used to update the server with device data (Such as generating deviceID's), reset devices,
 set individual device data, and send unique commands. The POST method contains a body
 of the require JSON structure, and in its nature does not require a response from a
 server, however the server WILL respond, and response handling should be expected especially
@@ -60,10 +51,7 @@ values given are descriptive, and not indicative of what the values may be.
   time: "this is the time of the sent request"
   event: {
     event-type: "The type of event goes here"
-    parameters: {
-                param1: "some example parameter"
-                param2: "some example parameter"
-                }
+    parameters: []
          }
   deviceType: "The type of Device i.e. 'light sensor board' "
   SensorTypes: [sens1, sens2, sens3] "Enumeration of each sensor"
@@ -79,12 +67,12 @@ Event, event-type, and parameters are ALWAYS required as the determine server re
 Event-types drive the system and are integral to the multi-functionality of the server.
 Below are the accepted event-types and their required methods, and parameters.
 Event-types w/ required methods and param:
+    connect: POST
     update: POST (sampletime)
     reset: POST, GET (DeviceID,DeviceType,sensorType,object)
     pull: GET (file,DeviceID,DeviceType,SensorType,time,object)
     set: POST, GET (DeviceID,DeviceType,SensorType)
     export: GET (to,deviceID,deviceType,sensorType,time,object)
-    connect: CONNECT (setinitial--'true or false'--, initial)
     settings: GET, POST (deviceType,sensorType,values)
     unique: POST, GET (values)
 
@@ -98,3 +86,6 @@ Also whenever a device is initially requested it creates a file for each sensor 
 constructed of the deviceID plus the sensortype. When post commands are called, the sever
 opens the pre-constructed files and appends to them, and GET methods export the file to
 wherever the users specifies.
+
+
+
