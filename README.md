@@ -8,7 +8,7 @@ Each of these methods has different event types that are declared within the JSO
 
 |eventType|Method|Function|
 |----|---|----|
-|connect|POST|generates and returns deviceID|
+|connect|POST|Generates and returns deviceID|
 |update|POST|Updates the server with sensor information|
 |test|POST|For sending test signals confirming connection|
 |pull|POST|For retrieving sensor data files|
