@@ -25,7 +25,7 @@ const http = require('http'); //node http module
 const net = require('net'); //node net module
 const fs = require('fs'); //node file system module
 const url = require('url'); //node url module
-const Papa = require('papaparse'); //papaparse module for CSV<===>JSON
+//const Papa = require('papaparse'); //papaparse module for CSV<===>JSON
 
 const postbodyrequirements = ['deviceID', 'time', 'event', 'deviceType', 'sensorTypes', 'sensorData', 'group', 'location', 'file'];
 const getbodyrequirements = ['time', 'event', 'deviceType', 'sensorTypes', 'group', 'location'];
