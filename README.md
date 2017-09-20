@@ -13,6 +13,7 @@ Each of these methods has different event types that are declared within the JSO
 |update|POST|Updates the server with sensor information|
 |test|POST|For sending test signals confirming connection|
 |pull|POST|For retrieving sensor data files|
+|reset|POST|For reseting specific files or sensors|
 
 ## JSON Structure
 ALL devices must send JSON in the following format, but not all postions need to be populated:
@@ -56,5 +57,9 @@ ALL devices must send JSON in the following format, but not all postions need to
 ```
 After the deviceID is generated, a few things will unfold. The first of these is that the server will respond with JSON data of its own (a slightly different format), with the inclusion of the new deviceID. This value will be under the JSON value "response". Simultaneously the server will log the NEW device ID, along with the connection information.
 
+After a deviceID is generated, it is up to the device to store, and maintain the ID, as it is needed for all further communication with the server. If a new ID is required another connect eventType may be sent.
+
 #### 2. Updating Data and Sensor Information
+
+After obtaining a deviceID, a device may update the server, send test messages, pull information, or reset. The most common of these is a update, which is detailed in this section.
 
