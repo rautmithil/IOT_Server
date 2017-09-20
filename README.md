@@ -1,6 +1,8 @@
 # IOT_Server
 Written in Node, and compatible with any device that can send HTTP messages, and JSON formatted Data.
 
+The main and only server file is serverhandler.js, and requires node to run.
+
 ## Overview
 This is a general purpose IOT server, that takes JSON input data. The server takes two types of methods POST webhooks, and Get requests.
 
