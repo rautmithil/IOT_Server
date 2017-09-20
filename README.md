@@ -8,9 +8,6 @@ Each of these methods has different event types that are declared within the JSO
 |POST|GET|
 |----|---|
 |connect|n/a|
-|----|---|
 |update|n/a|
-|----|---|
 |test|n/a|
-|----|---|
 |pull|n/a|
