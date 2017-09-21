@@ -63,3 +63,12 @@ After a deviceID is generated, it is up to the device to store, and maintain the
 
 After obtaining a deviceID, a device may update the server, send test messages, pull information, or reset. The most common of these is a update, which is detailed in this section.
 
+In order to update the server, an eventType of update is required. Other required information is the time, deviceType(which should remain constant), and of course the sensorTypes, and sensorData. In order to correctly update the information the postion "n" in the sensorType array should match the position n for the data of that sensor in sensorData.
+
+```
+    [lux, CO2, accelerometer-x,accelerometer-y,accelerometer-z]
+    [24, 35, 15, 43, 12] //Will update the files with 24 as the value for lux 35 for CO2 and so on...
+```
+#### 3. Testing Connection
+
+In order to test the connection, simply send the formatted JSON data with an eventType of "test"
