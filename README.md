@@ -20,7 +20,7 @@ ALL devices must send JSON in the following format, but not all postions need to
 
 ```
     {
-      deviceID: //Only needed after intially connecting, is the reference to the server)
+      deviceID: //Only needed after intially connecting, is the reference to the server
       time: //The time that the message is sent
       event: {
         eventType: //This is one of the eventTypes in the above table
@@ -71,4 +71,22 @@ In order to update the server, an eventType of update is required. Other require
 ```
 #### 3. Testing Connection
 
-In order to test the connection, simply send the formatted JSON data with an eventType of "test"
+In order to test the connection, simply send the formatted JSON data with an eventType of "test", a JSON formatted HTTP response will be sent back in the following format:
+
+```
+     mes = {
+        'deviceID': 'ServerOG',
+        'time':123456,
+        'event':{
+          'eventType': 'updateResponse',
+          'parameters': []
+        },
+        'deviceType':'Server',
+        'response': null,
+        'status': 'Successful'
+      }
+```
+
+#### 4. Querying Data
+
+In order to obtain localized data from the server you can use the pull eventType. This event is 
