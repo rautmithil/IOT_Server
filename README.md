@@ -89,4 +89,23 @@ In order to test the connection, simply send the formatted JSON data with an eve
 
 #### 4. Querying Data
 
-In order to obtain localized data from the server you can use the pull eventType. This event is 
+In order to obtain localized data from the server you can use the pull eventType. This event is only used primarily to obtain a limited amount of data, and returns a concatenated string of the **FULL** file. The data returned will be delineated by commas in a csv format style, and multiple files will be delineated with "\r\n". When submitting a pull eventType, the parameters must be used. Incorrect use of parameters will result in a null response from the server. The parameters that a device may send can only be sensortypes that are attributed with that deviceType and deviceID. An example is below:
+
+```
+    {
+    deviceID: test123
+    time: 123456
+    event: {
+      eventType: pull            //eventType
+      parameters: [lux,CO2]     //parameters of associated sensors
+            }
+    deviceType: sensorBoard
+    sensorTypes: [lux,CO2,accelerometer]
+    sensorData: []
+    group:
+    location:
+    file:
+   }
+```
+
+## Server
