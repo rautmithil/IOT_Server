@@ -34,7 +34,7 @@ ALL devices must send JSON in the following format, but not all postions need to
       file: //Optional filename
     }
 ```
-## Setting up server
+## Client Information
 
 #### 1. Connecting Devices
 
@@ -108,4 +108,27 @@ In order to obtain localized data from the server you can use the pull eventType
    }
 ```
 
-## Server
+#### 5. Local Resets
+A client device with a deviceID can initiate a local reset to the server. This local reset **ONLY** resets the sensorFiles listed in its sensorTypes. During a reset the server logs backup files, into a directory with the time of the reset. To intiate this reset the client device must send an appropriate deviceID, with an eventType reset, and parameter reset, as follows:
+
+```
+    {
+    deviceID: test123
+    time: 123456
+    event: {
+      eventType: reset      //reset eventType
+      parameters: [reset]   //regular reset parameter
+            }
+    deviceType: sensorBoard
+    sensorTypes: [lux,accelerometer]    //will reset the sensors listed here, with
+    sensorData: []
+    group:
+    location:
+    file:
+   }
+```
+## Server Information
+
+#### 1. Resets
+Currently 
+    
