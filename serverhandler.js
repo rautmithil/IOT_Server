@@ -1,7 +1,7 @@
 /*
-Sensor Server V2
-Kenwood Harris Jr
-Boston University MCL June 2017
+Sensor Server V3
+Mithil Kishor Raut, Kenwood Harris Jr
+Boston University MCL Oct 2017
 
 Papaparse Library Used, thanks to mholt @github, found at www.papaparse.com.
 
@@ -23,6 +23,7 @@ Papaparse Library Used, thanks to mholt @github, found at www.papaparse.com.
 
 const http = require('http'); //node http module
 const net = require('net'); //node net module
+var ip = require('ip');
 const fs = require('fs'); //node file system module
 const url = require('url'); //node url module
 //const Papa = require('papaparse'); //papaparse module for CSV<===>JSON
@@ -45,40 +46,39 @@ const sensorMaster = 'sensorMaster.csv'; //holds a record of the created sensor 
 const onStartUp = ['serverSettingsFile','lightBoxSettings','postlog','getlog','IDtrack','IDlog','infofile']; //Required system files
 const logFiles = [postlog,getlog,pulllog,IDtrack,IDlog,sensorMaster]
 
-//Checks system settings, and ensures neccessary files are included in repsective directory
+//Checks system settings, and ensures necessary files are included in respective directory
 function systemTest(){}
 
 
 //Assigns device ID takes one parameter, the devicetype
-function assignDeviceID(dt){
+function assignDeviceID(deviceID){
   //Handles IDtrack
   if(fs.existsSync(IDtrack)){
     var idNum = fs.readFileSync(IDtrack); //reads the tracker file contents
   }else{ //if IDtrack does not exist
-    var idNum = '1';
     fdit = fs.openSync(IDtrack,'wx');
-    fs.writeSync(fdit,idNum);
+    fs.writeSync(fdit,deviceID);
     fs.closeSync(fdit);
   }
-  id = dt + idNum;  //Generates devicve ID
-  console.log("ID is: " + id);
-  idNum = parseInt(idNum);
-  numAppend = idNum + 1;    //Increments device ID replaces it into the file
-  numAppend = numAppend.toString();
-  fs.writeFileSync(IDtrack,numAppend,null);
+  id = deviceID;  //Generates device ID
+  console.log("ID is: " + deviceID);
+  //idNum = parseInt(idNum);
+  //numAppend = idNum + 1;    //Increments device ID replaces it into the file
+  //numAppend = numAppend.toString();
+  fs.writeFileSync(IDtrack,deviceID,null);
 
   //Handles IDlog
   if(fs.existsSync(IDlog)){ //Checks to see if the file has been created.
     idLogBuf = Buffer.from(fs.readFileSync(IDlog)); //Creates new buffer of the id log
-    idLogBuf = Buffer.from(idLogBuf + id + "," + getDateTime() + "\r\n");
+    idLogBuf = Buffer.from(idLogBuf + deviceID + "," + getDateTime() + "\r\n");
     fs.writeFileSync(IDlog ,idLogBuf,null); //Writes appended buffer
-  }else{//if the file does not exist the file is creaetd with the necessary headers.
+  }else{//if the file does not exist the file is created with the necessary headers.
     fdil = fs.openSync(IDlog,'wx');
-    fs.writeSync(fdil,"DeviceID,Time\r\n" + id + "," + getDateTime() + "\r\n");
+    fs.writeSync(fdil,"DeviceID,Time\r\n" + deviceID + "," + getDateTime() + "\r\n");
     fs.closeSync(fdil);
   }
   //Generated ID is returned
-  return id
+  return deviceID;
 }
 
 //Function for obtaining the date and time
@@ -97,6 +97,24 @@ function getDateTime() {
     day = (day < 10 ? "0" : "") + day;
 
     var time = (year + ":" + month + ":" + day + ":" + hour + ":" + min + ":" + sec).toString();
+    return time;
+}
+
+function getDate() {
+    var date = new Date();
+    var hour = date.getHours();
+    hour = (hour < 10 ? "0" : "") + hour;
+    var min  = date.getMinutes();
+    min = (min < 10 ? "0" : "") + min;
+    var sec  = date.getSeconds();
+    sec = (sec < 10 ? "0" : "") + sec;
+    var year = date.getFullYear();
+    var month = date.getMonth() + 1;
+    month = (month < 10 ? "0" : "") + month;
+    var day  = date.getDate();
+    day = (day < 10 ? "0" : "") + day;
+
+    var time = (year + "_" + month + "_" + day).toString();
     return time;
 }
 
@@ -138,21 +156,20 @@ function postmessage(b,ip){
   //POST Event handler
   switch (b.event.eventType) {
     case 'connect':
-    /*
-      Microcontroller must hold a device ID constant, and with first request must be a deviceID of init
-    */
   //Logs the files to the master file
   //Creates sensor files
-      newId = assignDeviceID(b.deviceType); //holds the newly generated ID
+      newId = assignDeviceID(b.deviceID); //holds the newly generated ID
       var sensorNum = b.sensorTypes.length; //holds the number of sensors on the device
       var h;
       //Loops to create the necessary sensor files
       for(h=0;h<sensorNum;h++){
-        sensorfile = newId + b.sensorTypes[h] + ".csv";
+        sensorfile = newId + b.sensorTypes[h] + getDate() + ".csv";
         if (fs.existsSync(sensorfile)){ //checks to see if the file already exists
-          console.log("File " + sensorfile + " already exists overwriting file...");
+          console.log("File " + sensorfile + " already exists ");
         }
-        fs.writeFileSync(sensorfile,"Value,Recorded_Time,Recieved_Time\r\n",null); //creates empty sensor file with value and time header
+        else{
+        fs.writeFileSync(sensorfile,"Value,Recorded_Time,Recieved_Time\r\n",null); //creates empty sensor file with value and time header    
+        }
         
         if(fs.existsSync(sensorMaster)){//Checks to see if sensorMaster file exists
           masterBuffer = Buffer.from(fs.readFileSync(sensorMaster,null)); //Saves current masterFile to buffer
@@ -187,12 +204,16 @@ function postmessage(b,ip){
     */
       var v;
       for(v=0; v< b.sensorTypes.length; v++) {
-        var wd = b.deviceID.toString() + b.sensorTypes[v] + ".csv"; //stores the working directory
-        var sensorpost = b.sensorData[v].toString() + "," + b.time + "," + getDateTime().toString() + "\r\n";//the log of the information
-        console.log("Updating File: " + wd);
-        fdup = fs.openSync(wd,'a');
-        fs.writeSync(fdup,sensorpost);
-        fs.closeSync(fdup);
+          //console.log("length: " + Object.keys(b.sensorData).length);
+          for(w = 0; w< b.sensorData.length; w++){
+            var wd = b.deviceID.toString() + b.sensorTypes[v] + ".csv"; //stores the working directory
+            var sensorpost = b.sensorData[w].toString() + "," + b.time + "," + getDateTime().toString() + "\r\n";//the log of the information
+            //console.log("sp: " + sensorpost);
+            console.log("Updating File: " + wd);
+            fdup = fs.openSync(wd,'a');
+            fs.writeSync(fdup,sensorpost);
+            fs.closeSync(fdup);
+        }
       }
       mes = {
         'deviceID': 'ServerOG',
@@ -211,7 +232,7 @@ function postmessage(b,ip){
 
     case 'reset':
       /* If the reset request is sent from an individual device then only that device's file is reset. Only a computer or non-device client can reset device groups or full server
-          Reset Types: reset(Resets the device that sends the request), sensorReset(Resets all the sensor files of a sensor type), deviceReset(resest all of the same device type),
+          Reset Types: reset(Resets the device that sends the request), sensorReset(Resets all the sensor files of a sensor type), deviceReset(reset all of the same device type),
           fullReset(Can only be initiated by approved ip addresses) 
       */
       console.log("Reset request from: " + ip);
@@ -506,9 +527,9 @@ var testserver = http.createServer(function(req,res){
     if(method == "POST"){
       //Try block to parse the string into a JSON object
       try{
-        body = JSON.parse(body);
+        body = JSON.parse(body, 'utf8');
       } catch (err){
-          console.log("Request from " + reqip + " does not have correct JSON format");
+          console.log("Request from " + reqip + " does not have correct JSON format" + err);
           var jsonerr = {
             'deviceID': 'ServerOG',
             'time':getDateTime(),
@@ -552,7 +573,7 @@ var testserver = http.createServer(function(req,res){
 });
 
 var port = 8000;
-var host = '0.0.0.0';
+var host = ip.address();
 //var host = 'localhost';
 var backlog = 511;
 
